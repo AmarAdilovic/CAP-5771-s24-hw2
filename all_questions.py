@@ -203,36 +203,51 @@ def question2():
     class_A_proportion = 0
     class_B_proportion = (0.6 * 0.2) + (0.2 * 0.2)
     class_C_proportion = (0.2 * 0.2)
-    split = class_A_proportion + class_B_proportion + class_C_proportion
+    split_02 = class_A_proportion + class_B_proportion + class_C_proportion
+    split_x_02_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split_02))
 
-    split_x_02_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split))
+    class_A_proportion = (0.4 * 0.8) + (0.3 * 0.3)
+    class_B_proportion = (0.6 * 0.5)
+    class_C_proportion = (0.3 * 0.3)
+    split_02_2 = class_A_proportion + class_B_proportion + class_C_proportion
+    split_x_02_entropy_2 = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split_02_2))
 
     # Split at x ≤ 0.7
     class_A_proportion = (0.4 * 0.5)
     class_B_proportion = (0.6 * 0.7) + (0.2 * 0.2)
     class_C_proportion = (0.2 * 0.2)
-    split = class_A_proportion + class_B_proportion + class_C_proportion
+    split_07 = class_A_proportion + class_B_proportion + class_C_proportion
+    split_x_07_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split_07))
 
-    split_x_07_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split))
+    class_A_proportion = (0.4 * 0.3) + (0.3 * 0.3)
+    class_B_proportion = 0
+    class_C_proportion = (0.3 * 0.3)
+    split_07_2 = class_A_proportion + class_B_proportion + class_C_proportion
+    split_x_07_entropy_2 = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split_07_2))
+
 
     # Split at y ≤ 0.6
     class_A_proportion = (0.3 * 0.3)
     class_B_proportion = (0.6 * 0.7)
     class_C_proportion = (0.3 * 0.3)
-    split = class_A_proportion + class_B_proportion + class_C_proportion
+    split_06 = class_A_proportion + class_B_proportion + class_C_proportion
+    split_y_06_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split_06))
 
-    split_y_06_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split))
-
+    class_A_proportion = (0.4 * 0.8)
+    class_B_proportion = (0.2 * 0.2)
+    class_C_proportion = (0.2 * 0.2)
+    split_06_2 = class_A_proportion + class_B_proportion + class_C_proportion
+    split_y_06_entropy_2 = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split_06_2))
 
     # Infogain
     # (b) Compare the entropy when the data is split at x ≤ 0.2, x ≤ 0.7, and y ≤ 0.6.
-    answer["(b) x < 0.2"] =  overall_entropy - (split_x_02_entropy)
-    answer["(b) x < 0.7"] = overall_entropy - (split_x_07_entropy)
-    answer["(b) y < 0.6"] = overall_entropy - (split_y_06_entropy)
+    answer["(b) x < 0.2"] = overall_entropy - (((split_02 / total) * split_x_02_entropy) + ((split_02_2 / total) * split_x_02_entropy_2))
+    answer["(b) x < 0.7"] = overall_entropy - (((split_07 / total) * split_x_07_entropy) + ((split_07_2 / total) * split_x_07_entropy_2))
+    answer["(b) y < 0.6"] = overall_entropy - (((split_06 / total) * split_y_06_entropy) + ((split_06_2 / total) * split_y_06_entropy_2))
 
     # choose one of 'x=0.2', 'x=0.7', or 'x=0.6'
     # (c) Based on your answer in part (b), which attribute split condition should be used as the root of the decision tree.
-    answer["(c) attribute"] = "x=0.2"  
+    answer["(c) attribute"] = "x=0.7"  
 
     # Use the Binary Tree structure to construct the tree
     # Answer is an instance of BinaryTree
