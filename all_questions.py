@@ -2,19 +2,28 @@
 
 # import student_code_with_answers.utils as u
 import utils as u
-
+import pprint
 
 # Example of how to specify a binary with the structure:
 # See the file INSTRUCTIONS.md
 # ----------------------------------------------------------------------
+"""
+Consider the training set given below for predicting lung cancer in patients based on their symptoms (chronic cough and weight loss)
+and other lifestyle and environmental attributes (tobacco smoking and exposure to radon).
 
+Encode the two-level decision tree into 'utils.BinaryTree' obtained using entropy as the impurity measure.
 
+Fill the answer dictionary provided in the python function provided.
+Show your steps in code for every step of the tree construction process.
+
+Compute the training error of the decision tree
+"""
 def question1():
     """
     Note 1: Each attribute can appear as a node in the tree AT MOST once.
-    Note 2: For level two, fill the keys for all cases left and right. If and attribute
-    is not considered for level 2, set the values to -1. For example, if "flu" were the
-    choice for level 1 (it is not), then set level2_left['flu'] = level2_right['flu'] = -1.,
+    Note 2: For level two, fill the keys for all cases left and right.
+    If an attribute is not considered for level 2, set the values to -1.
+    For example, if "flu" were the choice for level 1 (it is not), then set level2_left['flu'] = level2_right['flu'] = -1.,
     and the same for keys 'flu_info_gain'.
     """
     answer = False
@@ -23,40 +32,120 @@ def question1():
     level2_left = {}
     level2_right = {}
 
-    level1["smoking"] = 0.
-    level1["smoking_info_gain"] = 0.
+    # to calculate entropy from the textbook:
+    # -sum(pi(t) log2 pi(t))
+    #   where pi(t) is the relative frequency of training instances that belong to class i at node t,
+    #   c is the total number of classes,
+    #   and 0 log2 0 = 0
+    #  for a binary classification problem: p0(t) + p1(t) = 1
 
-    level1["cough"] = 0.
-    level1["cough_info_gain"] = 0.
+    """
+    Tobacco Radon       Chronic   Weight    Lung
+    Smoking Exposure    Cough     Loss     Cancer
+    Yes     Yes         Yes       No        Yes
+    Yes     No          Yes       No        Yes
+    Yes     No          Yes       Yes       Yes
+    Yes     No          Yes       Yes       Yes
+    No      Yes         No        Yes       Yes
+    Yes     No          No        No        No
+    No      No          Yes       No        No
+    No      No          Yes       Yes       No
+    No      No          Yes       No        No
+    No      No          No        Yes       No 
+    """
+    def compute_entropy(num_y, num_n):
+        if (num_n == 0 or num_y == 0): return 0
+        total = num_y + num_n
+        calculated_entropy = (-(num_y / total) * u.log2(num_y / total)) - ((num_n / total) * u.log2(num_n / total))
+        return calculated_entropy
 
-    level1["radon"] = 0.
-    level1["radon_info_gain"] = 0.
+    def sum_entropy(num_y, entropy_y, num_n, entropy_n):
+        total = num_y + num_n
+        return  ((num_y / total) * entropy_y) + ((num_n / total) * entropy_n)
 
-    level1["weight_loss"] = 0.0
-    level1["weight_loss_info_gain"] = 0.
+    # target_entropy is the entropy of the "Lung Cancer" column
+    def compute_info_gain(entropy, target_entropy = compute_entropy(num_y=5, num_n=5)):
+        return target_entropy - entropy
 
-    level2_left["smoking"] = 0.
-    level2_left["smoking_info_gain"] = 0.
-    level2_right["smoking"] = 0.
-    level2_right["smoking_info_gain"] = 0.
+    smoking_entropy_y = compute_entropy(num_y=1, num_n=4)
+    smoking_entropy_n = compute_entropy(num_y=4, num_n=1)
+    smoking_entropy = sum_entropy(num_y=7, entropy_y=smoking_entropy_y, num_n=3, entropy_n=smoking_entropy_n)
+    level1["smoking"] = smoking_entropy
+    smoking_info_gain = compute_info_gain(smoking_entropy)
+    level1["smoking_info_gain"] = smoking_info_gain
 
-    level2_left["radon"] = 0.
-    level2_left["radon_info_gain"] = 0.
+    cough_entropy_y = compute_entropy(num_y=4, num_n=3)
+    cough_entropy_n = compute_entropy(num_y=1, num_n=2)
+    cough_entropy = sum_entropy(num_y=7, entropy_y=cough_entropy_y, num_n=3, entropy_n=cough_entropy_n)
+    level1["cough"] = cough_entropy
+    cough_info_gain = compute_info_gain(cough_entropy)
+    level1["cough_info_gain"] = cough_info_gain
 
-    level2_left["cough"] = 0.
-    level2_left["cough_info_gain"] = 0.
+    radon_entropy_y = compute_entropy(num_y=2, num_n=0)
+    radon_entropy_n = compute_entropy(num_y=3, num_n=5)
+    radon_entropy = sum_entropy(num_y=2, entropy_y=radon_entropy_y, num_n=8, entropy_n=radon_entropy_n)
+    level1["radon"] = radon_entropy
+    radon_info_gain = compute_info_gain(radon_entropy)
+    level1["radon_info_gain"] = radon_info_gain
 
-    level2_left["weight_loss"] = 0.
-    level2_left["weight_loss_info_gain"] = 0.
+    weight_loss_entropy_y = compute_entropy(num_y=2, num_n=3)
+    weight_loss_entropy_n = compute_entropy(num_y=3, num_n=2)
+    weight_loss_entropy = sum_entropy(num_y=5, entropy_y=weight_loss_entropy_y, num_n=5, entropy_n=weight_loss_entropy_n)
+    level1["weight_loss"] = weight_loss_entropy
+    weight_loss_info_gain = compute_info_gain(weight_loss_entropy)
+    level1["weight_loss_info_gain"] = weight_loss_info_gain
 
-    level2_right["radon"] = 0.
-    level2_right["radon_info_gain"] = 0.
+    # Smoking has the highest information gain, starting with yes
 
-    level2_right["cough"] = 0.
-    level2_right["cough_info_gain"] = 0.
+    # If an attribute is not considered for level 2, set the values to -1.
+    level2_left["smoking"] = -1.0
+    level2_left["smoking_info_gain"] = -1.0
+    level2_right["smoking"] = -1.0
+    level2_right["smoking_info_gain"] = -1.0
 
-    level2_right["weight_loss"] = 0.
-    level2_right["weight_loss_info_gain"] = 0.
+    level2_left_radon_entropy_y = compute_entropy(num_y=1, num_n=0)
+    level2_left_radon_entropy_n = compute_entropy(num_y=3, num_n=1)
+    level2_left_radon_entropy = sum_entropy(num_y=1, entropy_y=level2_left_radon_entropy_y, num_n=4, entropy_n=level2_left_radon_entropy_n)
+    level2_left["radon"] = level2_left_radon_entropy
+    level2_left_radon_info_gain = compute_info_gain(level2_left_radon_entropy, target_entropy=smoking_entropy)
+    level2_left["radon_info_gain"] = level2_left_radon_info_gain
+
+    level2_left_cough_entropy_y = compute_entropy(num_y=4, num_n=0)
+    level2_left_cough_entropy_n = compute_entropy(num_y=0, num_n=1)
+    level2_left_cough_entropy = sum_entropy(num_y=4, entropy_y=level2_left_cough_entropy_y, num_n=1, entropy_n=level2_left_cough_entropy_n)
+    level2_left["cough"] = level2_left_cough_entropy
+    level2_left_cough_info_gain = compute_info_gain(level2_left_cough_entropy, target_entropy=smoking_entropy)
+    level2_left["cough_info_gain"] = level2_left_cough_info_gain
+
+    level2_left_weight_loss_entropy_y = compute_entropy(num_y=2, num_n=0)
+    level2_left_weight_loss_entropy_n = compute_entropy(num_y=2, num_n=1)
+    level2_left_weight_loss_entropy = sum_entropy(num_y=2, entropy_y=level2_left_weight_loss_entropy_y, num_n=3, entropy_n=level2_left_weight_loss_entropy_n)
+    level2_left["weight_loss"] = level2_left_weight_loss_entropy
+    level2_left_weight_loss_info_gain = compute_info_gain(level2_left_weight_loss_entropy, target_entropy=smoking_entropy)
+    level2_left["weight_loss_info_gain"] = level2_left_weight_loss_info_gain
+
+    # Now evaluating no
+
+    level2_right_radon_entropy_y = compute_entropy(num_y=1, num_n=0)
+    level2_right_radon_entropy_n = compute_entropy(num_y=0, num_n=4)
+    level2_right_radon_entropy = sum_entropy(num_y=1, entropy_y=level2_right_radon_entropy_y, num_n=4, entropy_n=level2_right_radon_entropy_n)
+    level2_right["radon"] = level2_right_radon_entropy
+    level2_right_radon_info_gain = compute_info_gain(level2_right_radon_entropy, target_entropy=smoking_entropy)
+    level2_right["radon_info_gain"] = level2_right_radon_info_gain
+
+    level2_right_cough_entropy_y = compute_entropy(num_y=3, num_n=0)
+    level2_right_cough_entropy_n = compute_entropy(num_y=1, num_n=1)
+    level2_right_cough_entropy = sum_entropy(num_y=3, entropy_y=level2_right_cough_entropy_y, num_n=2, entropy_n=level2_right_cough_entropy_n)
+    level2_right["cough"] = level2_right_cough_entropy
+    level2_right_cough_info_gain = compute_info_gain(level2_right_cough_entropy, target_entropy=smoking_entropy)
+    level2_right["cough_info_gain"] = level2_right_cough_info_gain
+
+    level2_right_weight_loss_entropy_y = compute_entropy(num_y=0, num_n=2)
+    level2_right_weight_loss_entropy_n = compute_entropy(num_y=1, num_n=2)
+    level2_right_weight_loss_entropy = sum_entropy(num_y=2, entropy_y=level2_right_weight_loss_entropy_y, num_n=3, entropy_n=level2_right_weight_loss_entropy_n)
+    level2_right["weight_loss"] = level2_right_weight_loss_entropy
+    level2_right_weight_loss_info_gain = compute_info_gain(level2_right_weight_loss_entropy, target_entropy=smoking_entropy)
+    level2_right["weight_loss_info_gain"] = level2_right_weight_loss_info_gain
 
     answer["level1"] = level1
     answer["level2_left"] = level2_left
@@ -64,34 +153,98 @@ def question1():
 
     # Fill up `construct_tree``
     # tree, training_error = construct_tree()
-    tree = u.BinaryTree("root")  # MUST STILL CREATE THE TREE *****
+    tree = u.BinaryTree("x < 0.5")  # MUST STILL CREATE THE TREE *****
     answer["tree"] = tree  # use the Tree structure
+
     # answer["training_error"] = training_error
     answer["training_error"] = 0.0  
+    # print("Question 1: ")
+    # pprint.pprint(answer)
 
     return answer
 
 
 # ----------------------------------------------------------------------
+"""
+Consider a training set sampled uniformly from the two-dimensional space shown in Figure 1.
+Assume that the training set size is large enough so that the probabilities can be calculated accurately based on the areas of the selected regions.
 
+The space is divided into three classes A, B, and C.
+In this exercise, you will build a decision tree from the training set.
+"""
 
 def question2():
     answer = {}
 
+    # to calculate entropy from the textbook:
+    # -sum(pi(t) log2 pi(t))
+    #   where pi(t) is the relative frequency of training instances that belong to class i at node t,
+    #   c is the total number of classes,
+    #   and 0 log2 0 = 0
+
+    # Class area proportion (two rectangles, height * width + h * w)
+    class_A_proportion = (0.4 * 0.8) + (0.3 * 0.3)
+    class_B_proportion = (0.6 * 0.7) + (0.2 * 0.2)
+    class_C_proportion = (0.3 * 0.3) + (0.2 * 0.2)
+
+    total = class_A_proportion + class_B_proportion + class_C_proportion
+
+    def compute_entropy(proportions, total=total):
+        return -sum((p / total) * u.log2((p / total)) for p in proportions if p > 0)
+
+
+    overall_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion])
     # Answers are floats
-    answer["(a) entropy_entire_data"] = 0.
+    # (a) Compute the entropy for the overall data
+    answer["(a) entropy_entire_data"] = overall_entropy
+
+    # Compute the entropy for each split
+    # Split at x ≤ 0.2
+    class_A_proportion = 0
+    class_B_proportion = (0.6 * 0.2) + (0.2 * 0.2)
+    class_C_proportion = (0.2 * 0.2)
+    split = class_A_proportion + class_B_proportion + class_C_proportion
+
+    split_x_02_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split))
+
+    # Split at x ≤ 0.7
+    class_A_proportion = (0.4 * 0.5)
+    class_B_proportion = (0.6 * 0.7) + (0.2 * 0.2)
+    class_C_proportion = (0.2 * 0.2)
+    split = class_A_proportion + class_B_proportion + class_C_proportion
+
+    split_x_07_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split))
+
+    # Split at y ≤ 0.6
+    class_A_proportion = (0.3 * 0.3)
+    class_B_proportion = (0.6 * 0.7)
+    class_C_proportion = (0.3 * 0.3)
+    split = class_A_proportion + class_B_proportion + class_C_proportion
+
+    split_y_06_entropy = compute_entropy([class_A_proportion, class_B_proportion, class_C_proportion], total=(split))
+
+
     # Infogain
-    answer["(b) x <= 0.2"] = 0.
-    answer["(b) x <= 0.7"] = 0.
-    answer["(b) y <= 0.6"] = 0.
+    # (b) Compare the entropy when the data is split at x ≤ 0.2, x ≤ 0.7, and y ≤ 0.6.
+    answer["(b) x <= 0.2"] =  overall_entropy - (split_x_02_entropy)
+    answer["(b) x <= 0.7"] = overall_entropy - (split_x_07_entropy)
+    answer["(b) y <= 0.6"] = overall_entropy - (split_y_06_entropy)
 
     # choose one of 'x=0.2', 'x=0.7', or 'x=0.6'
-    answer["(c) attribute"] = ""  
+    # (c) Based on your answer in part (b), which attribute split condition should be used as the root of the decision tree.
+    answer["(c) attribute"] = "x=0.2"  
 
     # Use the Binary Tree structure to construct the tree
     # Answer is an instance of BinaryTree
-    tree = u.BinaryTree("Root")
+    # (d) Draw the full decision tree for the data set.
+    # Constraints: Use only the decision boundaries x = 0.7, x = 0.2, y = 0.6, y = 0.3, y = 0.8 to contruct your tree.
+    # Each level of the tree will maximize the information gain.
+    # Use the utils.BinaryTree class to save the tree in the ‘answer‘ dictionary
+    tree = u.BinaryTree("x <= 0.2")
+    
     answer["(d) full decision tree"] = tree
+    # print("Question 2: ")
+    # pprint.pprint(answer)
 
     return answer
 
@@ -135,12 +288,12 @@ def question4():
     #  'quantitative', 'interval', 'ratio'
     # If you have a choice between 'binary' and 'discrete', choose 'binary'
 
-    answer["a"] = []
+    answer["a"] = ['continuous', 'quantitative', 'ratio']
 
     # Explain if there is more than one interpretation. Repeat for the other questions. At least five words that form a sentence.
-    answer["a: explain"] = ""
+    answer["a: explain"] = "Could be discrete if ever decreasing measurements of time are ignored."
 
-    answer["b"] = []
+    answer["b"] = ['continuous', 'quantitative', 'ratio']
     answer["b: explain"] = ""
 
     answer["c"] = []
@@ -259,7 +412,7 @@ def question7():
 
 if __name__ == "__main__":
     answers = {}
-    answers["q1"] = question1()
+    # answers["q1"] = question1()
     answers["q2"] = question2()
     answers["q3"] = question3()
     answers["q4"] = question4()
