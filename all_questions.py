@@ -226,9 +226,9 @@ def question2():
 
     # Infogain
     # (b) Compare the entropy when the data is split at x ≤ 0.2, x ≤ 0.7, and y ≤ 0.6.
-    answer["(b) x <= 0.2"] =  overall_entropy - (split_x_02_entropy)
-    answer["(b) x <= 0.7"] = overall_entropy - (split_x_07_entropy)
-    answer["(b) y <= 0.6"] = overall_entropy - (split_y_06_entropy)
+    answer["(b) x < 0.2"] =  overall_entropy - (split_x_02_entropy)
+    answer["(b) x < 0.7"] = overall_entropy - (split_x_07_entropy)
+    answer["(b) y < 0.6"] = overall_entropy - (split_y_06_entropy)
 
     # choose one of 'x=0.2', 'x=0.7', or 'x=0.6'
     # (c) Based on your answer in part (b), which attribute split condition should be used as the root of the decision tree.
