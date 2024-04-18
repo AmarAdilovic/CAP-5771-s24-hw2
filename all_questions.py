@@ -2,7 +2,6 @@
 
 # import student_code_with_answers.utils as u
 import utils as u
-import pandas as pd
 import pprint
 
 # Example of how to specify a binary with the structure:
@@ -256,18 +255,25 @@ def question2():
 def question3():
     answer = {}
 
-    data = {
-    "Customer ID": range(1, 21),
-    "Gender": ['M', 'M', 'M', 'M', 'M', 'M', 'F', 'F', 'F', 'F', 'M', 'M', 'M', 'M', 'F', 'F', 'F', 'F', 'F', 'F'],
-    "Car Type": ['Family', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Luxury', 'Family', 'Family', 'Family', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury'],
-    "Shirt Type": ['Small', 'Medium', 'Medium', 'Large', 'Extra Large', 'Extra Large', 'Small', 'Small', 'Medium', 'Large', 'Large', 'Extra Large', 'Medium', 'Extra Large', 'Small', 'Small', 'Medium', 'Medium', 'Medium', 'Large'],
-    "Class": ['C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1']
-    }
+    customer_ids = range(1, 21)
+    genders = ['M', 'M', 'M', 'M', 'M', 'M', 'F', 'F', 'F', 'F', 'M', 'M', 'M', 'M', 'F', 'F', 'F', 'F', 'F', 'F']
+    car_types = ['Family', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Luxury', 
+                'Family', 'Family', 'Family', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury']
+    shirt_types = ['Small', 'Medium', 'Medium', 'Large', 'Extra Large', 'Extra Large', 'Small', 'Small', 'Medium', 'Large', 
+                'Large', 'Extra Large', 'Medium', 'Extra Large', 'Small', 'Small', 'Medium', 'Medium', 'Medium', 'Large']
+    classes = ['C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1']
 
-    df = pd.DataFrame(data)
-    classes = set(df['Class'])
+    def group_by_attribute(attribute_list):
+        attribute_classes = {}
+        for attribute, class_val in zip(attribute_list, classes):
+            if attribute not in attribute_classes:
+                attribute_classes[attribute] = []
+            attribute_classes[attribute].append(class_val)
+        return list(attribute_classes.values())
+
     # Function to calculate Gini index for a given attribute, generation assisted by ChatGPTv4
-    def calculate_gini(groups):
+    def calculate_gini(attribute):
+        groups = group_by_attribute(attribute)
         n_instances = float(sum([len(group) for group in groups]))
         gini = 0.0
         for group in groups:
@@ -275,15 +281,14 @@ def question3():
             if size == 0: continue
             score = 0.0
 
-            for class_val in classes:
+            for class_val in set(classes):
                 p = (group.count(class_val) / size) ** 2
                 score += p
 
             gini += (1.0 - score) * (size / n_instances)
         return gini
 
-    # Gini index for the overall collection
-    overall_gini = calculate_gini([list(df['Class'])])
+    overall_gini = calculate_gini(classes)
 
     # float
     # classes are evenly split
@@ -292,15 +297,13 @@ def question3():
     # float
     answer["(b) Gini, ID"] = 0.0
 
-    gender_classes = df.groupby('Gender')['Class'].apply(list)
-    gender_gini = calculate_gini(gender_classes, )
+    gender_gini = calculate_gini(genders)
     answer["(c) Gini, Gender"] = gender_gini
 
-    car_type_classes = df.groupby('Car Type')['Class'].apply(list)
-    car_type_gini = calculate_gini(car_type_classes)
+    car_type_gini = calculate_gini(car_types)
     answer["(d) Gini, Car type"] = car_type_gini
-    shirt_type_classes = df.groupby('Shirt Type')['Class'].apply(list)
-    shirt_type_gini = calculate_gini(shirt_type_classes)
+
+    shirt_type_gini = calculate_gini(shirt_types)
     answer["(e) Gini, Shirt type"] = shirt_type_gini
 
     answer["(f) attr for splitting"] = "car"
@@ -308,8 +311,8 @@ def question3():
     # Explanatory text string
     answer["(f) explain choice"] = "The attribute with the smallest Gini was chosen for the splitting"
     
-    # print('Question 3:')
-    # pprint.pprint(answer)
+    print('Question 3:')
+    pprint.pprint(answer)
 
     return answer
 
@@ -390,7 +393,6 @@ def question4():
 
 
 # ----------------------------------------------------------------------
-
 
 def question5():
     explain = {}
