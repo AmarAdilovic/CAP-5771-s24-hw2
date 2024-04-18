@@ -272,8 +272,11 @@ def question3():
         return list(attribute_classes.values())
 
     # Function to calculate Gini index for a given attribute, generation assisted by ChatGPTv4
-    def calculate_gini(attribute):
-        groups = group_by_attribute(attribute)
+    def calculate_gini(attribute, list=False):
+        if (list == True):
+            groups = attribute
+        else:
+            groups = group_by_attribute(attribute)
         n_instances = float(sum([len(group) for group in groups]))
         gini = 0.0
         for group in groups:
@@ -288,7 +291,7 @@ def question3():
             gini += (1.0 - score) * (size / n_instances)
         return gini
 
-    overall_gini = calculate_gini(classes)
+    overall_gini = calculate_gini([classes], list=True)
 
     # float
     # classes are evenly split
@@ -311,8 +314,8 @@ def question3():
     # Explanatory text string
     answer["(f) explain choice"] = "The attribute with the smallest Gini was chosen for the splitting"
     
-    print('Question 3:')
-    pprint.pprint(answer)
+    # print('Question 3:')
+    # pprint.pprint(answer)
 
     return answer
 
@@ -400,18 +403,18 @@ def question5():
     # Read appropriate section of book chapter 3
 
     # string: one of 'Model 1' or 'Model 2'
-    explain["a"] = ""
-    explain["a explain"] = ""
+    explain["a"] = "Model 2"
+    explain["a explain"] = "As Model 1 has high accuracy on the training set but low accuracy on the test set, it is likely overfitting, model 2 stays consistent in its performance."
 
     # string: one of 'Model 1' or 'Model 2'
-    explain["b"] = ""
-    explain["b explain"] = ""
+    explain["b"] = "Model 2"
+    explain["b explain"] = "As generalization is one of the most important aspects of models, model 2 performances slightly worse but it is a more robust and reliable model and thus would be the better production choice."
 
-    explain["c similarity"] = ""
-    explain["c similarity explain"] = ""
+    explain["c similarity"] = "prevent overfitting"
+    explain["c similarity explain"] = "Both prevent overfitting by penalizing model complexity and aim to increase generalization"
 
-    explain["c difference"] = ""
-    explain["c difference explain"] = ""
+    explain["c difference"] = "how they prevent overfitting"
+    explain["c difference explain"] = "MDL considers how large the encoded model description would be, while the pessimistic error estimate counts the number of leaves/nodes and uses that to adjust the error rate"
 
     return explain
 
@@ -448,21 +451,48 @@ def question6():
 # ----------------------------------------------------------------------
 def question7():
     answer = {}
+    def compute_entropy(num_y, num_n):
+        if (num_n == 0 or num_y == 0): return 0
+        total = num_y + num_n
+        calculated_entropy = (-(num_y / total) * u.log2(num_y / total)) - ((num_n / total) * u.log2(num_n / total))
+        return calculated_entropy
+
+    def sum_entropy(num_y, entropy_y, num_n, entropy_n):
+        total = num_y + num_n
+        return  ((num_y / total) * entropy_y) + ((num_n / total) * entropy_n)
+
+    # target_entropy is the entropy of the "Lung Cancer" column
+    def compute_info_gain(entropy, target_entropy):
+        return target_entropy - entropy
+
 
     # float
-    answer["a, info gain, ID"] = 0.
-    answer["b, info gain, Handedness"] = 0.
+    entropy_ID = (compute_entropy(10, 10))
+    info_gain_ID = compute_info_gain(0.0, entropy_ID)
+    answer["a, info gain, ID"] = info_gain_ID
+    HS_left =  compute_entropy(9, 1)
+    HS_right =  compute_entropy(1, 9)
+    HS = sum_entropy(10, HS_left, 10, HS_right)
+    info_gain_handedness = compute_info_gain(HS, entropy_ID)
+    answer["b, info gain, Handedness"] = info_gain_handedness
 
     # string: "ID" or "Handedness"
-    answer["c, which attrib"] = ""
+    # ID has the higher information gain
+    answer["c, which attrib"] = "ID"
 
     # answer is a float
-    answer["d, gain ratio, ID"] = 0.
-    answer["e, gain ratio, Handedness"] = 0.
+    H_ID = -sum([(1/20) * u.log2(1/20) for _ in range(20)])
+    answer["d, gain ratio, ID"] = info_gain_ID / H_ID
+    answer["e, gain ratio, Handedness"] = info_gain_handedness / entropy_ID
 
     # string: one of 'ID' or 'Handedness' based on gain ratio
     # choose the attribute with the largest gain ratio
-    answer["f, which attrib"] = ""
+    # Handedness has the higher gain ratio
+    answer["f, which attrib"] = "Handedness"
+
+    # print("Question 7: ")
+    # pprint.pprint(answer)
+
 
     return answer
 
