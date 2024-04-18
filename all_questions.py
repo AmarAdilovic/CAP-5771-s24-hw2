@@ -367,7 +367,7 @@ def question4():
     answer["g: explain"] = "Could be interval however as there could be a defined zero, ratio."
 
     # (h) ISBN numbers for books. (Look up the format on the Web.)
-    answer["h"] = ['discrete', 'qualtitative', 'nominal']
+    answer["h"] = ['discrete', 'qualitative', 'nominal']
     answer["h: explain"] = "Qualitative instead of quantiative as it essentially an ID number"
 
     # (i) Ability to pass light in terms of the following values: opaque, translucent, transparent.
