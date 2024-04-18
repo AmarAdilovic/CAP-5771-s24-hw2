@@ -288,45 +288,60 @@ def question4():
     #  'quantitative', 'interval', 'ratio'
     # If you have a choice between 'binary' and 'discrete', choose 'binary'
 
-    answer["a"] = ['continuous', 'quantitative', 'ratio']
+    # (a) Time in terms of AM or PM.
+    answer["a"] = ['binary', 'qualitative', 'ordinal']
 
     # Explain if there is more than one interpretation. Repeat for the other questions. At least five words that form a sentence.
-    answer["a: explain"] = "Could be discrete if ever decreasing measurements of time are ignored."
+    answer["a: explain"] = "It is binary as there are two categories, AM or PM. Could be discrete if ever decreasing measurements of time are ignored."
 
+    # (b) Brightness as measured by a light meter.
     answer["b"] = ['continuous', 'quantitative', 'ratio']
     answer["b: explain"] = ""
 
-    answer["c"] = []
-    answer["c: explain"] = ""
+    # (c) Brightness as measured by peoples judgments.
+    answer["c"] = ['discrete', 'qualitative', 'ordinal']
+    answer["c: explain"] = "People will categorize brightness into very bright, bright, and not bright generally, with no equal interval between the values."
 
-    answer["d"] = []
-    answer["d: explain"] = ""
+    # (d) Angles as measured in degrees between 0 and 360.
+    answer["d"] = ['continuous', 'quantitative', 'ratio']
+    answer["d: explain"] = "Could be interval, but the defined zero point points to ratio."
 
-    answer["e"] = []
+    # (e) Bronze, Silver, and Gold medals as awarded at the Olympics.
+    answer["e"] = ['discrete', 'qualitative', 'ordinal']
     answer["e: explain"] = ""
 
-    answer["f"] = []
-    answer["f: explain"] = ""
+    # (f) Height above sea level.
+    answer["f"] = ['continuous', 'quantitative', 'interval']
+    answer["f: explain"] = "Could be ratio but as it is above sea level it implies there is no zero point"
 
-    answer["g"] = []
-    answer["g: explain"] = ""
+    # (g) Number of patients in a hospital.
+    answer["g"] = ['discrete', 'quantitative', 'ratio']
+    answer["g: explain"] = "Could be interval however as there could be a defined zero, ratio."
 
-    answer["h"] = []
+    # (h) ISBN numbers for books. (Look up the format on the Web.)
+    answer["h"] = ['discrete', 'quantitative', 'nominal']
     answer["h: explain"] = ""
 
-    answer["i"] = []
+    # (i) Ability to pass light in terms of the following values: opaque, translucent, transparent.
+    answer["i"] = ['discrete', 'qualitative', 'ordinal']
     answer["i: explain"] = ""
 
-    answer["j"] = []
+    # (j) Military rank.
+    answer["j"] = ['discrete', 'qualitative', 'ordinal']
     answer["j: explain"] = ""
 
-    answer["k"] = []
+    # (k) Distance from the center of campus.
+    answer["k"] = ['continuous', 'quantitative', 'ratio']
     answer["k: explain"] = ""
 
-    answer["l"] = []
+    # (l) Density of a substance in grams per cubic centimeter.
+    answer["l"] = ['continuous', 'quantitative', 'ratio']
     answer["l: explain"] = ""
 
-    answer["m"] = []
+    # (m) Coat check number. (When you attend an event, you can often give
+    # your coat to someone who, in turn, gives you a number that you can
+    # use to claim your coat when you leave.)
+    answer["m"] = ['discrete', 'qualitative', 'nominal']
     answer["m: explain"] = ""
 
     return answer
