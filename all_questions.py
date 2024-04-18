@@ -412,7 +412,7 @@ def question7():
 
 if __name__ == "__main__":
     answers = {}
-    # answers["q1"] = question1()
+    answers["q1"] = question1()
     answers["q2"] = question2()
     answers["q3"] = question3()
     answers["q4"] = question4()
