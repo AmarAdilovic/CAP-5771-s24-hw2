@@ -2,6 +2,7 @@
 
 # import student_code_with_answers.utils as u
 import utils as u
+import pandas as pd
 import pprint
 
 # Example of how to specify a binary with the structure:
@@ -255,19 +256,60 @@ def question2():
 def question3():
     answer = {}
 
+    data = {
+    "Customer ID": range(1, 21),
+    "Gender": ['M', 'M', 'M', 'M', 'M', 'M', 'F', 'F', 'F', 'F', 'M', 'M', 'M', 'M', 'F', 'F', 'F', 'F', 'F', 'F'],
+    "Car Type": ['Family', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Sports', 'Luxury', 'Family', 'Family', 'Family', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury', 'Luxury'],
+    "Shirt Type": ['Small', 'Medium', 'Medium', 'Large', 'Extra Large', 'Extra Large', 'Small', 'Small', 'Medium', 'Large', 'Large', 'Extra Large', 'Medium', 'Extra Large', 'Small', 'Small', 'Medium', 'Medium', 'Medium', 'Large'],
+    "Class": ['C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C0', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1', 'C1']
+    }
+
+    df = pd.DataFrame(data)
+    classes = set(df['Class'])
+    # Function to calculate Gini index for a given attribute, generation assisted by ChatGPTv4
+    def calculate_gini(groups):
+        n_instances = float(sum([len(group) for group in groups]))
+        gini = 0.0
+        for group in groups:
+            size = float(len(group))
+            if size == 0: continue
+            score = 0.0
+
+            for class_val in classes:
+                p = (group.count(class_val) / size) ** 2
+                score += p
+
+            gini += (1.0 - score) * (size / n_instances)
+        return gini
+
+    # Gini index for the overall collection
+    overall_gini = calculate_gini([list(df['Class'])])
+
     # float
-    answer["(a) Gini, overall"] = 0.
+    # classes are evenly split
+    answer["(a) Gini, overall"] = overall_gini
 
     # float
     answer["(b) Gini, ID"] = 0.0
-    answer["(c) Gini, Gender"] = 0.
-    answer["(d) Gini, Car type"] = 0.
-    answer["(e) Gini, Shirt type"] = 0.
 
-    answer["(f) attr for splitting"] = ""
+    gender_classes = df.groupby('Gender')['Class'].apply(list)
+    gender_gini = calculate_gini(gender_classes, )
+    answer["(c) Gini, Gender"] = gender_gini
+
+    car_type_classes = df.groupby('Car Type')['Class'].apply(list)
+    car_type_gini = calculate_gini(car_type_classes)
+    answer["(d) Gini, Car type"] = car_type_gini
+    shirt_type_classes = df.groupby('Shirt Type')['Class'].apply(list)
+    shirt_type_gini = calculate_gini(shirt_type_classes)
+    answer["(e) Gini, Shirt type"] = shirt_type_gini
+
+    answer["(f) attr for splitting"] = "car"
 
     # Explanatory text string
-    answer["(f) explain choice"] = ""
+    answer["(f) explain choice"] = "The attribute with the smallest Gini was chosen for the splitting"
+    
+    # print('Question 3:')
+    # pprint.pprint(answer)
 
     return answer
 
