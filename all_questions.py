@@ -367,8 +367,8 @@ def question4():
     answer["g: explain"] = "Could be interval however as there could be a defined zero, ratio."
 
     # (h) ISBN numbers for books. (Look up the format on the Web.)
-    answer["h"] = ['discrete', 'quantitative', 'nominal']
-    answer["h: explain"] = ""
+    answer["h"] = ['discrete', 'qualtitative', 'nominal']
+    answer["h: explain"] = "Qualitative instead of quantiative as it essentially an ID number"
 
     # (i) Ability to pass light in terms of the following values: opaque, translucent, transparent.
     answer["i"] = ['discrete', 'qualitative', 'ordinal']
@@ -429,10 +429,11 @@ def question6():
     #  and "float" is a floating point number (notice: <=)
     # The value could also be "A" or "B" if it is a leaf
     answer["a, level 1"] = ""
-    answer["a, level 2, right"] =""
-    answer["a, level 2, left"] = ""
-    answer["a, level 3, left"] = ""
-    answer["a, level 3, right"] = ""
+    # guess A for the leaves
+    answer["a, level 2, right"] ="A"
+    answer["a, level 2, left"] = "A"
+    answer["a, level 3, left"] = "A"
+    answer["a, level 3, right"] = "A"
 
     # run each datum through the tree. Count the number of errors and divide by number of samples. .
     # Since we have areas: calculate the area that is misclassified (total area is unity)
